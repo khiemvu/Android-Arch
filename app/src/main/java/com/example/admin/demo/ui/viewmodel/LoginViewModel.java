@@ -13,12 +13,14 @@ import com.example.admin.demo.repository.dto.UserDTO;
 import com.example.admin.demo.repository.service.AuthenRespository;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
+import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
+import io.reactivex.functions.Function;
 import io.reactivex.internal.operators.completable.CompletableFromAction;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
@@ -34,11 +36,9 @@ import java.util.List;
 
 public class LoginViewModel extends AndroidViewModel
 {
-    private final CompositeDisposable mDisposable = new CompositeDisposable();
     @Inject
     public AuthenRespository authenRespository;
     private LoginInfoDTO loginInfoDTO;
-    private MutableLiveData<List<UserDTO>> userDTOMutableLiveData;
 
     public LoginViewModel(Application application)
     {
@@ -59,89 +59,22 @@ public class LoginViewModel extends AndroidViewModel
 
     public void doLogin(LoginInfoDTO loginInfoDTO)
     {
-        mDisposable.add(authenRespository.doLogin(loginInfoDTO)
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
-                .subscribeWith(
-                        new DisposableObserver<ResponseDTO<List<UserDTO>>>()
-                        {
-
-                            @Override
-                            public void onComplete()
-                            {
-                                Log.i("XXX", "Get data from server completed");
-//                                        return mutableLiveData;
-                            }
-
-                            @Override
-                            public void onError(Throwable e)
-                            {
-//                                        Timber.e(e, "woops we got an error while getting the list of contributors");
-                            }
-
-                            @Override
-                            public void onNext(ResponseDTO<List<UserDTO>> userDTOs)
-                            {
-                                authenRespository.doPersitData(userDTOs.getResult());
-//                                authenRespository.getAllUser();
-                            }
-                        }));
+        authenRespository.doLogin(loginInfoDTO);
     }
 
     @Override
     protected void onCleared()
     {
         super.onCleared();
-        mDisposable.dispose();
     }
 
     public LiveData<List<UserDTO>> loadUsers()
     {
-        if (userDTOMutableLiveData == null)
-        {
-            userDTOMutableLiveData = new MutableLiveData<>();
-            getUsers();
-        }
-        return userDTOMutableLiveData;
+        return authenRespository.getAllUser();
     }
 
     private void getUsers()
     {
-//        mDisposable.add((Disposable) authenRespository.getAllUser());
-        mDisposable.add(authenRespository.getAllUser()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(new DisposableSubscriber<List<User>>()
-                {
-                    @Override
-                    public void onNext(List<User> users)
-                    {
-                        List<UserDTO> userDTOs = new ArrayList<>();
-                        for (User user : users)
-                        {
-                            userDTOs.add(new UserDTO().convertToDTO(user));
-                        }
-                        userDTOMutableLiveData.setValue(userDTOs);
-                    }
-
-                    @Override
-                    public void onError(Throwable t)
-                    {
-
-                    }
-
-                    @Override
-                    public void onComplete()
-                    {
-
-                    }
-                }));
-//        List<User> users = authenRespository.getAllUser();
-//        List<UserDTO> userDTOs = new ArrayList<>();
-//        for (User user : users)
-//        {
-//            userDTOs.add(new UserDTO().convertToDTO(user));
-//        }
-//        userDTOMutableLiveData.setValue(userDTOs);
+        authenRespository.getAllUser();
     }
 }

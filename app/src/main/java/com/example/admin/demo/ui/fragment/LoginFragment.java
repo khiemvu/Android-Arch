@@ -31,13 +31,13 @@ import java.util.List;
 public class LoginFragment extends LifecycleFragment
 {
     public static final String TAG = "LOGIN_FRAGMENT";
-    private final CompositeDisposable mDisposable = new CompositeDisposable();
     LoginViewModel loginViewModel;
     EditText etEmail, etPassword;
     ListView lvContent;
     Button btLogin;
     TelephonyManager telephonyManager;
     LiveData<List<UserDTO>> userDTOs;
+    AccountListAdapter accountListAdapter;
 
     @Nullable
     @Override
@@ -70,8 +70,15 @@ public class LoginFragment extends LifecycleFragment
             @Override
             public void onChanged(@Nullable List<UserDTO> userList)
             {
-                AccountListAdapter accountListAdapter = new AccountListAdapter(loginViewModel.getApplication(), userList);
+//                if (accountListAdapter == null)
+//                {
+                accountListAdapter = new AccountListAdapter(loginViewModel.getApplication(), userList);
                 lvContent.setAdapter(accountListAdapter);
+//                }
+//                else
+//                {
+//                    accountListAdapter.notifyDataSetChanged();
+//                }
             }
         });
 
