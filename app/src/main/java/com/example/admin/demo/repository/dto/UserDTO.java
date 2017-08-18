@@ -9,6 +9,7 @@ import com.example.admin.demo.repository.database.entity.User;
 
 public class UserDTO implements ConvertableDTO<User, UserDTO>
 {
+    String languageCode;
     private String webUserId;
     private String enterpriseId;
     private String firstName;
@@ -19,7 +20,6 @@ public class UserDTO implements ConvertableDTO<User, UserDTO>
     private String photoId;
     private boolean customer;
     private Boolean firstLogin;
-    String languageCode;
 
     public String getWebUserId()
     {
@@ -150,6 +150,16 @@ public class UserDTO implements ConvertableDTO<User, UserDTO>
     @Override
     public UserDTO convertToDTO(User user)
     {
-        return null;
+        UserDTO userDTO = new UserDTO();
+        userDTO.setCustomer(user.isCustomer());
+        userDTO.setEmail(user.getEmail());
+        userDTO.setEnterpriseId(user.getEnterpriseId());
+        userDTO.setFirstLogin(user.getFirstLogin());
+        userDTO.setFirstName(user.getFirstName());
+        userDTO.setLanguageCode(user.getLanguageCode());
+        userDTO.setLastName(user.getLastName());
+        userDTO.setWebUserId(user.getWebUserId());
+        userDTO.setToken(user.getToken());
+        return userDTO;
     }
 }

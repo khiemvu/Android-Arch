@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:swipe="http://schemas.android.com/apk/res-auto"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="@color/white"
+              android:orientation="vertical">
+    <RelativeLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/rlWholeLayout"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            android:paddingLeft="13dp"
+            android:paddingRight="13dp">
+        <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/rlImage">
+            <ImageView
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:id="@+id/auth_account_item_ivAvatar"
+                    android:layout_width="78.67dp"
+                    android:layout_height="78.67dp"
+                    android:background="@drawable/avatar_default_account"/>
+            <ProgressBar
+                    android:id="@+id/progress_loading"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:indeterminate="false"
+                    android:layout_centerVertical="true"
+                    android:visibility="gone"
+                    android:layout_centerInParent="true"
+                    style="@android:style/Widget.ProgressBar.Small"/>
+        </RelativeLayout>
+        <LinearLayout android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:layout_marginLeft="10dp"
+                      android:layout_marginRight="10dp"
+                      android:layout_centerInParent="true"
+                      android:layout_toRightOf="@+id/rlImage"
+                      android:layout_toLeftOf="@+id/ivRememberPassword"
+                      android:orientation="vertical">
+            <TextView android:id="@+id/auth_account_item_tvAccountName"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:singleLine="true"
+                      android:text="Huong Duong"
+                      style="@style/T3"/>
+            <TextView android:id="@+id/auth_account_item_tvAccountEmail"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:singleLine="true"
+                      android:text="huongduong@toyota.vn"
+                      style="@style/T7"/>
+            <TextView android:id="@+id/auth_account_item_tvDealerName"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:text="Toyota Hanoi"
+                      android:singleLine="true"
+                      style="@style/T23"/>
+
+        </LinearLayout>
+
+        <ImageView
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerInParent="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/ivRememberPassword"
+                android:visibility="gone"
+        />
+    </RelativeLayout>
+    <LinearLayout android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:orientation="vertical">
+        <View android:layout_width="match_parent"
+              android:layout_height="1dp"
+              android:background="@color/line1"/>
+        <View
+                android:id="@+id/auth_account_item_section"
+                android:layout_width="match_parent"
+                android:layout_height="23dp"
+                android:visibility="visible"
+                android:background="@color/whiteSmoke"/>
+    </LinearLayout>
+
+</LinearLayout>

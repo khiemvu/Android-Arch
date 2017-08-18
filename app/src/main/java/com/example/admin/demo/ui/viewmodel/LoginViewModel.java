@@ -3,6 +3,7 @@ package com.example.admin.demo.ui.viewmodel;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.util.Log;
 import com.example.admin.demo.DemoApp;
 import com.example.admin.demo.repository.database.entity.User;
@@ -11,14 +12,20 @@ import com.example.admin.demo.repository.dto.ResponseDTO;
 import com.example.admin.demo.repository.dto.UserDTO;
 import com.example.admin.demo.repository.service.AuthenRespository;
 import io.reactivex.Completable;
+import io.reactivex.Flowable;
 import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
 import io.reactivex.internal.operators.completable.CompletableFromAction;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subscribers.DisposableSubscriber;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,10 +34,11 @@ import java.util.List;
 
 public class LoginViewModel extends AndroidViewModel
 {
-    private LoginInfoDTO loginInfoDTO;
+    private final CompositeDisposable mDisposable = new CompositeDisposable();
     @Inject
     public AuthenRespository authenRespository;
-    private final CompositeDisposable mDisposable = new CompositeDisposable();
+    private LoginInfoDTO loginInfoDTO;
+    private MutableLiveData<List<UserDTO>> userDTOMutableLiveData;
 
     public LoginViewModel(Application application)
     {
@@ -75,7 +83,7 @@ public class LoginViewModel extends AndroidViewModel
                             public void onNext(ResponseDTO<List<UserDTO>> userDTOs)
                             {
                                 authenRespository.doPersitData(userDTOs.getResult());
-                                authenRespository.getAllUser();
+//                                authenRespository.getAllUser();
                             }
                         }));
     }
@@ -85,5 +93,55 @@ public class LoginViewModel extends AndroidViewModel
     {
         super.onCleared();
         mDisposable.dispose();
+    }
+
+    public LiveData<List<UserDTO>> loadUsers()
+    {
+        if (userDTOMutableLiveData == null)
+        {
+            userDTOMutableLiveData = new MutableLiveData<>();
+            getUsers();
+        }
+        return userDTOMutableLiveData;
+    }
+
+    private void getUsers()
+    {
+//        mDisposable.add((Disposable) authenRespository.getAllUser());
+        mDisposable.add(authenRespository.getAllUser()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new DisposableSubscriber<List<User>>()
+                {
+                    @Override
+                    public void onNext(List<User> users)
+                    {
+                        List<UserDTO> userDTOs = new ArrayList<>();
+                        for (User user : users)
+                        {
+                            userDTOs.add(new UserDTO().convertToDTO(user));
+                        }
+                        userDTOMutableLiveData.setValue(userDTOs);
+                    }
+
+                    @Override
+                    public void onError(Throwable t)
+                    {
+
+                    }
+
+                    @Override
+                    public void onComplete()
+                    {
+
+                    }
+                }));
+//        List<User> users = authenRespository.getAllUser();
+//        List<UserDTO> userDTOs = new ArrayList<>();
+//        for (User user : users)
+//        {
+//            userDTOs.add(new UserDTO().convertToDTO(user));
+//        }
+//        userDTOMutableLiveData.setValue(userDTOs);
     }
 }

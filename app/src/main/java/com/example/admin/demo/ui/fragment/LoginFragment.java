@@ -2,6 +2,7 @@ package com.example.admin.demo.ui.fragment;
 
 import android.arch.lifecycle.LifecycleFragment;
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Build;
@@ -17,6 +18,7 @@ import android.widget.ListView;
 import com.example.admin.demo.R;
 import com.example.admin.demo.repository.dto.LoginInfoDTO;
 import com.example.admin.demo.repository.dto.UserDTO;
+import com.example.admin.demo.ui.adapter.AccountListAdapter;
 import com.example.admin.demo.ui.viewmodel.LoginViewModel;
 import io.reactivex.disposables.CompositeDisposable;
 
@@ -29,14 +31,13 @@ import java.util.List;
 public class LoginFragment extends LifecycleFragment
 {
     public static final String TAG = "LOGIN_FRAGMENT";
-
+    private final CompositeDisposable mDisposable = new CompositeDisposable();
     LoginViewModel loginViewModel;
     EditText etEmail, etPassword;
     ListView lvContent;
     Button btLogin;
     TelephonyManager telephonyManager;
     LiveData<List<UserDTO>> userDTOs;
-    private final CompositeDisposable mDisposable = new CompositeDisposable();
 
     @Nullable
     @Override
@@ -61,7 +62,16 @@ public class LoginFragment extends LifecycleFragment
                 loginViewModel.setLoginInfoDTO(new LoginInfoDTO().createLoginInfoDTO(etEmail.getText().toString(), etPassword.getText().toString(),
                         Build.SERIAL, "Samsung galaxy S5"));
                 loginViewModel.doLogin(loginViewModel.getLoginInfoDTO());
-//        loginViewModel.
+            }
+        });
+
+        loginViewModel.loadUsers().observe(this, new Observer<List<UserDTO>>()
+        {
+            @Override
+            public void onChanged(@Nullable List<UserDTO> userList)
+            {
+                AccountListAdapter accountListAdapter = new AccountListAdapter(loginViewModel.getApplication(), userList);
+                lvContent.setAdapter(accountListAdapter);
             }
         });
 

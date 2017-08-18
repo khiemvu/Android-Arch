@@ -7,6 +7,7 @@ import com.example.admin.demo.repository.dto.ResponseDTO;
 import com.example.admin.demo.repository.dto.UserDTO;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import io.reactivex.Flowable;
 import io.reactivex.Observable;
 
 import javax.inject.Inject;
@@ -46,8 +47,8 @@ public class AuthenRespository
         }
     }
 
-    public void getAllUser()
+    public Flowable<List<User>> getAllUser()
     {
-        userDAO.findAllUsers();
+        return userDAO.findAllUsers();
     }
 }

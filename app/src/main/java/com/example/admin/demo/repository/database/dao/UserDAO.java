@@ -6,6 +6,7 @@ import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 import com.example.admin.demo.repository.database.entity.User;
 import io.reactivex.Flowable;
+import io.reactivex.Observable;
 
 import java.util.List;
 
@@ -28,5 +29,5 @@ public interface UserDAO
 //    LiveData<List<User>> findAllUser();
 //
     @Query("SELECT * FROM user")
-    List<User> findAllUsers();
+    Flowable<List<User>> findAllUsers();
 }
